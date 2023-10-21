@@ -8,6 +8,8 @@
 -- score, the score value for the correction
 -- Context: Write code in SQL is a nice level up!
 
+DROP PROCEDURE IF EXISTS AddBonus;
+DELIMITER $$
 CREATE PROCEDURE AddBonus (
   IN user_id INT,
   IN project_name VARCHAR(255),
@@ -20,6 +22,8 @@ BEGIN
         INSERT INTO projects (name) VALUES (project_name);
     END IF;
     SET project_id = (SELECT id FROM projects WHERE name = project_name LIMIT 1);
-    INSERT INTO corrections (user_id, project_name, score)
-    VALUES (user_id, project_name, score);
-END;
+    INSERT INTO corrections (user_id, project_id, score)
+    VALUES(user_id, project_id, score);
+
+END$$
+DELIMITER ;
