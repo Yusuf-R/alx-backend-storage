@@ -9,14 +9,16 @@
 -- And returns a / b or 0 if b == 0
 
 
-DELIMETER $$
-CREATE FUNCTION SafeDiv(IN a INT, IN b INT) 
-RETURNS FLOAT
+DELIMITER $$
+DROP FUNCTION IF EXISTS SafeDiv$$
+CREATE FUNCTION SafeDiv(a INT, b INT) 
+RETURNS FLOAT DETERMINISTIC
 BEGIN
-    IF b = 0 THEN
-        RETURN 0;
+    IF (b = 0) THEN
+    RETURN 0;
     ELSE
-        RETURN a / b;
+        RETURN (a / b);
     END IF;
 END$$
-DELIMETER ;
+
+DELIMITER ;
