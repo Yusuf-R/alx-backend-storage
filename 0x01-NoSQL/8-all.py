@@ -17,6 +17,4 @@ Raises:
 
 def list_all(mongo_collection) -> list:
     """ List all documents in a MongoDB collection."""
-    if mongo_collection.estimated_document_count() == 0:
-        return []
     return list(mongo_collection.find())
