@@ -17,4 +17,7 @@ Raises:
 
 def list_all(mongo_collection) -> list:
     """ List all documents in a MongoDB collection."""
-    return list(mongo_collection.find())
+    doc_list: list = []
+    for doc in mongo_collection.find():
+        doc_list.append(doc)
+    return doc_list
