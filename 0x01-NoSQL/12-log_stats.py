@@ -16,23 +16,18 @@ from pymongo import MongoClient
 # one line with the number of documents with:
 # method=GET
 # path=/status
-
-client = MongoClient("mongodb://127.0.0.1:27017")
-logs = client.logs.nginx
-data = list(logs.find())
-cnt = len(data)
-
-methods = ["GET", "POST", "PUT", "PATCH", "DELETE"]
-counts = {}
-
-for method in methods:
-    counts[method] = logs.count_documents({"method": method})
-
-status_count = logs.count_documents({"method": "GET", "path": "/status"})
-
-print(f"{cnt} logs")
-print("Methods:")
-for method, count in counts.items():
-    print(f"    method {method}: {count}")
-
-print(f"{status_count} status check")
+if __name__ == "__main__":
+    client = MongoClient("mongodb://127.0.0.1:27017")
+    logs = client.logs.nginx
+    data = list(logs.find())
+    cnt = len(data)
+    methods = ["GET", "POST", "PUT", "PATCH", "DELETE"]
+    counts = {}
+    for method in methods:
+        counts[method] = logs.count_documents({"method": method})
+    status_count = logs.count_documents({"method": "GET", "path": "/status"})
+    print(f"{cnt} logs")
+    print("Methods:")
+    for method, count in counts.items():
+        print(f"    method {method}: {count}")
+    print(f"{status_count} status check")
