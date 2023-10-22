@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """ Update School """
-import pymongo
+from typing import List
 
 
-def update_topics(mongo_collection, name: str, topics: list[str]):
+def update_topics(mongo_collection, name: str, topics: List[str]):
     """
     Update topics of a school document based on the name.
 
@@ -19,4 +19,7 @@ def update_topics(mongo_collection, name: str, topics: list[str]):
     Raises:
       None.
     """
-    mongo_collection.update_many({"name": name}, {"$set": {"topics": topics}})
+    search: dict = {"name": name}
+    update: dict = {"$set": {"topics": topics}}
+    mongo_collection.update_many(search, update)
+    return
