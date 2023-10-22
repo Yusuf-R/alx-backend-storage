@@ -17,6 +17,6 @@ BEGIN
                 GROUP BY UX.id)
         AS UWX
         SET UX.average_score = UWX.WX_AVG_SCORE
-        WHERE UX.id=UWX.id;);
+        WHERE UX.id=UWX.id;
 END$$
 DELIMITER ;
