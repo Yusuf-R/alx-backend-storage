@@ -13,7 +13,6 @@ def list_all(mongo_collection) -> list:
     Raises:
         None.
     """
-    doc_list: list = []
-    for doc in mongo_collection.find():
-        doc_list.append(doc)
-    return doc_list
+    if mongo_collection.estimated_document_count() == 0:
+        return []
+    return list(mongo_collection.find())
