@@ -33,6 +33,6 @@ status_count = logs.count_documents({"method": "GET", "path": "/status"})
 print(f"{cnt} logs")
 print("Methods:")
 for method, count in counts.items():
-    print(f"    {method}: {count}")
+    print(f"    method {method}: {count}")
 
 print(f"{status_count} status check")
