@@ -43,5 +43,5 @@ if __name__ == "__main__":
     print(f"{cnt} logs")
     print("Methods:")
     for method, count in counts.items():
-        print(f"method {method}: {count}")
+        print(f"    method {method}: {count}")
     print(f"{status_count} status check")
