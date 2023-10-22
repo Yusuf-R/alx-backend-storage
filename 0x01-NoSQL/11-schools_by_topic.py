@@ -1,22 +1,25 @@
 #!/usr/bin/env python3
-""" Where can I learn Python? """
+""" MongoDB Operations with Python using pymongo """
 import pymongo
 
+# Write a Python function that returns
+# the list of school having a specific topic:
 
-def schools_by_topic(mongo_collection, topic: str):
-    """ Search the school based in school
+# Prototype: def schools_by_topic(mongo_collection, topic):
+# mongo_collection will be the pymongo collection object
+# topic (string) will be topic searched
 
-        Args:
-            mongo_collection: Collection
-            topic: Content
 
-        Return:
-            List of school
+def schools_by_topic(mongo_collection, topic: str) -> list:
     """
-    query: dict = {"topics": topic}
-    schools: list = []
-
-    for school in mongo_collection.find(query):
-        schools.append(school)
-
-    return schools
+    Returns the list of school having a specific topic.
+    Args:
+      mongo_collection: A MongoDB collection object.
+      topic (string) will be topic searched
+    Returns:
+      None
+    Raises:
+      None.
+    """
+    obj = mongo_collection.find({"topics": topic})
+    return list(obj)
