@@ -66,7 +66,7 @@ def cache_and_count(fucn):
         content = response.text
 
         # cache the content with expiration of 10secs
-        redis_client.setex(cache_key, 10, content.encode("utf-8"))
+        redis_client.setex(cache_key, 9, content.encode("utf-8"))
 
         # increament the caache count=
         redis_client.incr(count_key)
