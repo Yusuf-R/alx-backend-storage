@@ -75,52 +75,50 @@ class Cache:
         self._redis = redis.Redis()
         self._redis.flushdb()
 
-    @call_history
-    @count_calls
-    def store(self, data: Union[str, bytes, int, float]) -> str:
+    def get(self, key: str, fn=None):
         """
-        Store the cache
-
+        Retrieve the value associated with the given key from Redis.
         Args:
-            data: bring the information to store
-
-        Return:
-            Key or number uuid
+            key (str): The key to retrieve the value for.
+            fn (callable, optional):
+                A function to apply to the value before returning it.
+        Returns:
+            The value associated with the key, or None if the key is not found.
+            the function is applied to the value before returning it.
         """
-        key = str(uuid4())
-        self._redis.set(key, data)
-
-        return key
-
-    def get(
-        self, key: str, fn: Callable = None
-    ) -> Union[str, bytes, int, float]:
-        """
-        Store the cache
-
-        Args:
-            data: bring the information to store
-
-        Return:
-            Key or number uuid
-        """
-        key = self._redit.get(key)
-
-        if fn:
-            return fn(key)
-
-        return key
+        data = self._redis.get(key)
+        if data and fn is not None:
+            return fn(data)
+        return data
 
     def get_str(self, key: str) -> str:
-        """Parametrized get str"""
-        return self._redit.get(key).decode("utf-8")
+        """
+        Retrieve the value of a string key from Redis.
+        Args:
+            key (str): The key to retrieve the value for.
+        Returns:
+            str: The value of the key, as a string.
+            If the key does not exist, returns None.
+        """
+        try:
+            data = self._redis.get(key, str)
+            data = str(data.decode("utf-8"))
+            return data
+        except Exception:
+            return None
 
     def get_int(self, key: str) -> int:
-        """Parametrized get int"""
-        value = self._redis.get(key)
+        """
+        Retrieve an integer value from Redis, given a key.
+        Args:
+            key (str): The key to retrieve the integer value for.
+        Returns:
+            int: The integer value associated with the given key,
+            or 0 if the key is not found or the value is not an integer.
+        """
         try:
-            value = int(value.decode("utf-8"))
+            data = self._redis.get(key, int)
+            data = int(data.decode("utf-8"))
+            return data
         except Exception:
-            value = 0
-
-        return value
+            return 0
