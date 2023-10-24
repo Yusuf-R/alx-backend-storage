@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 """ Module for web counting """
 import requests
+from flask import abort
 import redis
 from functools import wraps
 
 redis_client = redis.Redis()
 
 
-def cache_and_count(fucn):
+def cache_and_count(func):
     """Cache and count decorator
 
     This decorator function caches the content of a webpage for 10 seconds
@@ -26,7 +27,7 @@ def cache_and_count(fucn):
         None
     """
 
-    @wraps(fucn)
+    @wraps(func)
     def wrapper(url: str) -> str:
         """Get page from url
 
@@ -54,23 +55,19 @@ def cache_and_count(fucn):
         cache_key = "cache:{}".format(url)
         count_key = "count:{}".format(url)
 
+        # icreament the count first, kinda crazy though
+        redis_client.incr(count_key)
+
         # check if cached content exists
         cached_content = redis_client.get(cache_key)
         if cached_content:
             return cached_content.decode("utf-8")
 
         # get content from url
-        response = requests.get(url)
-        if response.status_code != 200:
-            return None
-        content = response.text
-
+        response = func(url)
         # cache the content with expiration of 10secs
-        redis_client.setex(cache_key, 9, content.encode("utf-8"))
-
-        # increament the caache count=
-        redis_client.incr(count_key)
-        return content
+        redis_client.setex(cache_key, 10, response)
+        return response
 
     return wrapper
 
@@ -79,4 +76,6 @@ def cache_and_count(fucn):
 def get_page(url: str) -> str:
     """Get page from url"""
     response = requests.get(url)
+    if response.status_code != 200:
+        abort(404)
     return response.text
