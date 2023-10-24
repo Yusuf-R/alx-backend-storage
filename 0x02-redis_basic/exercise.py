@@ -9,7 +9,7 @@ import redis
 
 
 def count_calls(method: Callable = None) -> Callable:
-    """Decorator count calls"""
+    """function Decorator count calls"""
     name = method.__qualname__
 
     @wraps(method)
@@ -75,6 +75,7 @@ class Cache:
         self._redis = redis.Redis()
         self._redis.flushdb()
 
+    @count_calls
     def store(self, data: Union[str, bytes, int, float]) -> str:
         """
         Stores the given data in the cache and
