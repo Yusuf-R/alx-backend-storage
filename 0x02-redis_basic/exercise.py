@@ -30,42 +30,25 @@ def call_history(method: Callable) -> Callable:
         name = method.__qualname__
         input: str = str(args)
         self._redis.rpush("{}:inputs".format(name), input)
-
         output = str(method(self, *args, **kwargs))
         self._redis.rpush("{}:outputs".format(name), output)
-
         return output
 
     return wrapper
 
 
-def replay(func: Callable):
-    """Replay function"""
-    r = redis.Redis()
-    func_name = func.__qualname__
-    number_calls = r.get(func_name)
-
-    try:
-        number_calls = number_calls.decode("utf-8")
-    except Exception:
-        number_calls = 0
-
-    print(f"{func_name} was called {number_calls} times:")
-
-    ins = r.lrange(func_name + ":inputs", 0, -1)
-    outs = r.lrange(func_name + ":outputs", 0, -1)
-
-    for cin, cout in zip(ins, outs):
-        try:
-            cin = cin.decode("utf-8")
-        except Exception:
-            cin = ""
-        try:
-            cout = cout.decode("utf-8")
-        except Exception:
-            cout = ""
-
-        print(f"{func_name}(*{cin}) -> {cout}")
+def replay(method: Callable):
+    """Display the history of calls of a particular function."""
+    name = method.__qualname__
+    obj_inst = method.__self__
+    inputs = obj_inst._redis.lrange("{}:inputs".format(name), 0, -1)
+    outputs = obj_inst._redis.lrange("{}:outputs".format(name), 0, -1)
+    count = obj_inst._redis.get(name).decode("utf-8")
+    print("{} was called {} times:".format(name, count))
+    for i, o in zip(inputs, outputs):
+        print(
+            "{}(*{}) -> {}".format(name, i.decode("utf-8"), o.decode("utf-8"))
+        )
 
 
 class Cache:
