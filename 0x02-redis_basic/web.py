@@ -6,36 +6,54 @@ from functools import wraps
 redis_client = redis.Redis()
 
 
-# In this tasks, we will implement a get_page function
-#    (prototype: def get_page(url: str) -> str:).
-#
-# The core of the function is very simple. It uses the requests module
-# to obtain the HTML content of a particular URL and returns it.
-#
-# Start in a new file named web.py and do not reuse the code written
-# in exercise.py.
-#
-# Inside get_page track how many times a particular URL was accessed in the
-# key "count:{url}" and cache the result with an expiration time of 10secs.
-# Tip: Use http://slowwly.robertomurray.co.uk to simulate a slow response and
-# test your caching.
-#
-# Bonus: implement this use case with decorators.
-
-
 def cache_and_count(fucn):
-    """ Cache and count decorator """
+    """Cache and count decorator
+
+    This decorator function caches the content of a webpage for 10 seconds
+    and also keeps track of the number of times the page has been accessed.
+
+    It uses Redis as the caching mechanism and the requests library
+    to fetch the content of the webpage.
+
+    Args:
+        fucn (function): The function to be decorated.
+
+    Returns:
+        function: The decorated function.
+
+    Raises:
+        None
+    """
+
     @wraps(fucn)
     def wrapper(url: str) -> str:
-        """Get page from url"""
+        """Get page from url
+
+        - This function fetches the content of a webpage from the given url.
+        - It first checks if the content is already cached in Redis.
+        - If it is, it returns the cached content. If not, it fetches
+            the content from the url using the requests library.
+        - If the response status code is not 200, it returns None.
+            If the content is fetched successfully, it caches the content
+            in Redis with an expiration time of 10 seconds and
+            also increments the count of the number of times the
+            page has been accessed.
+
+        Args:
+            url (str): The url of the webpage to fetch.
+
+        Returns:
+            str: The content of the webpage.
+
+        Raises:
+            None
+        """
 
         # create cache and count keys
         cache_key = "cache:{}".format(url)
         count_key = "count:{}".format(url)
 
         # check if cached content exists
-        # if cached_content := redis_client.get(cache_key):
-        #   return cached_content
         cached_content = redis_client.get(cache_key)
         if cached_content:
             return cached_content.decode("utf-8")
