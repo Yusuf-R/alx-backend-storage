@@ -2,7 +2,7 @@
 """
     String Redis
 """
-from uuid import uuid4
+import uuid
 from typing import Union, Callable
 from functools import wraps
 import redis
@@ -74,6 +74,23 @@ class Cache:
         """Constructor"""
         self._redis = redis.Redis()
         self._redis.flushdb()
+
+    def store(self, data: Union[str, bytes, int, float]) -> str:
+        """
+        Stores the given data in the cache and
+        returns a unique key that can be used to retrieve it later.
+
+        Args:
+          data: The data to be stored in the cache.
+          It can be a string, bytes, int or float.
+
+        Returns:
+          A string representing the unique key that
+          can be used to retrieve the stored data later.
+        """
+        key = uuid.uuid4().hex
+        self._redis.set(key, data)
+        return key
 
     def get(self, key: str, fn=None):
         """
