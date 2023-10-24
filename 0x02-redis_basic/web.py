@@ -3,12 +3,13 @@
 import requests
 from flask import abort
 import redis
+from typing import Callable
 from functools import wraps
 
 redis_client = redis.Redis()
 
 
-def cache_and_count(func):
+def cache_and_count(func: Callable) -> Callable:
     """Cache and count decorator
 
     This decorator function caches the content of a webpage for 10 seconds
@@ -28,7 +29,7 @@ def cache_and_count(func):
     """
 
     @wraps(func)
-    def wrapper(url: str) -> str:
+    def wrapper(url):
         """Get page from url
 
         - This function fetches the content of a webpage from the given url.
@@ -52,8 +53,8 @@ def cache_and_count(func):
         """
 
         # create cache and count keys
-        cache_key = "cache:{}".format(url)
-        count_key = "count:{}".format(url)
+        cache_key: str = "cache:{}".format(url)
+        count_key: str = "count:{}".format(url)
 
         # icreament the count first, kinda crazy though
         redis_client.incr(count_key)
@@ -64,10 +65,10 @@ def cache_and_count(func):
             return cached_content.decode("utf-8")
 
         # get content from url
-        response = func(url)
+        html = func(url)
         # cache the content with expiration of 10secs
-        redis_client.setex(cache_key, 10, response)
-        return response
+        redis_client.setex(cache_key, 10, html)
+        return html
 
     return wrapper
 
