@@ -24,6 +24,7 @@ redis_client = redis.Redis()
 
 
 def cache_and_count(fucn):
+    """ Cache and count decorator """
     @wraps(fucn)
     def wrapper(url: str) -> str:
         """Get page from url"""
