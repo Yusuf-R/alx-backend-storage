@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+""" Module for web counting """
 import requests
 import redis
 from functools import wraps
