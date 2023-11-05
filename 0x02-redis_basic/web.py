@@ -53,22 +53,22 @@ def cache_and_count(func: Callable) -> Callable:
         """
 
         # create cache and count keys
-        # cache_key: str = "cache:{}".format(url)
-        # count_key: str = "count:{}".format(url)
+        cache_key: str = "cache:{}".format(url)
+        count_key: str = "count:{}".format(url)
 
         # icreament the count first, kinda crazy though
-        redis_client.incr(f'count:{url}')
+        redis_client.incr(count_key)
 
         # check if cached content exists
-        cached_content = redis_client.get(f'cache:{url}')
+        cached_content = redis_client.get(cache_key)
         if cached_content:
-            return cached_content.decode("utf-8")
+            return cached_content.decode('utf-8')
 
         # get content from url
-        html = func(url)
+        web_page = func(url)
         # cache the content with expiration of 10secs
-        redis_client.setex(f'cache:{url}', 10, html)
-        return html
+        redis_client.setex(cache_key, 10, web_page)
+        return web_page
 
     return wrapper
 
@@ -77,6 +77,6 @@ def cache_and_count(func: Callable) -> Callable:
 def get_page(url: str) -> str:
     """Get page from url"""
     response = requests.get(url)
-    if response.status_code != 200:
-        abort(404)
+    # if response.status_code != 200:
+    # abort(404)
     return response.text
