@@ -62,7 +62,7 @@ def cache_and_count(func: Callable) -> Callable:
         # check if cached content exists
         cached_content = redis_client.get(cache_key)
         if cached_content:
-            return cached_content.decode('utf-8')
+            return cached_content.decode("utf-8")
 
         # get content from url
         web_page = func(url)
@@ -77,6 +77,6 @@ def cache_and_count(func: Callable) -> Callable:
 def get_page(url: str) -> str:
     """Get page from url"""
     response = requests.get(url)
-    # if response.status_code != 200:
-    # abort(404)
+    if response.status_code != 200:
+        abort(404)
     return response.text
